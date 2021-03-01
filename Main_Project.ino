@@ -11,7 +11,7 @@
 #define MQTT_SERV "io.adafruit.com"
 #define MQTT_PORT 1883
 #define MQTT_NAME "akagarwa1"
-#define MQTT_PASS "aio_UjRk3692OhO5Y80U0r7KNuShfomz"
+#define MQTT_PASS ""
 
 int R = D8;
 int G = D7;
@@ -33,38 +33,35 @@ struct color
   
     void lightItUp()
     {
-        digitalWrite(R,redValue);
-        digitalWrite(G,greenValue);
-        digitalWrite(B,blueValue);
+        analogWrite(R,redValue);
+        analogWrite(G,greenValue);
+        analogWrite(B,blueValue);
     }
 };
 //-----------------------------------------------
 
 
 //----------------Define Color Profiles----------
-color Red(255,0,0);
-color Blue(0,0,255);
-color Green(0,255,0);
-color Yellow(255,200,0);
-color Pink(255,128,255);
-color Purple(85,0,128);
-color OFF(0,0,0);
+color Yellow(255,255,0);          
+color LightRed(255,10,10);        
+color Lavender(181,66,246);       
+color LightGreen(103,223,147);
+color Coral(249,119,72);    
+color Turquoise(72,209,204);           
+color OFF(0,0,0);                 //Turn of the lights by changing RGB to  0 0 0
 //-----------------------------------------------
 
 
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, MQTT_SERV, MQTT_PORT, MQTT_NAME, MQTT_PASS);
 
-Adafruit_MQTT_Subscribe happyLight = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/happyLight");
-Adafruit_MQTT_Publish happyStatus = Adafruit_MQTT_Publish(&mqtt, MQTT_NAME "/f/happyStatus");
 Adafruit_MQTT_Subscribe sadLight = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/sadLight");
-Adafruit_MQTT_Publish sadStatus = Adafruit_MQTT_Publish(&mqtt, MQTT_NAME "/f/sadStatus");
 Adafruit_MQTT_Subscribe tiredLight = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/tiredLight");
-Adafruit_MQTT_Publish tiredStatus = Adafruit_MQTT_Publish(&mqtt, MQTT_NAME "/f/tiredStatus");
 Adafruit_MQTT_Subscribe stressedLight = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/stressedLight");
-Adafruit_MQTT_Publish stressedStatus = Adafruit_MQTT_Publish(&mqtt, MQTT_NAME "/f/stressedStatus");
+Adafruit_MQTT_Subscribe headacheLight = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/headacheLight");
+Adafruit_MQTT_Subscribe worriedLight = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/worriedLight");
+Adafruit_MQTT_Subscribe boredLight = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/boredLight");
 Adafruit_MQTT_Subscribe TurnOFF = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/TurnOFF");
-Adafruit_MQTT_Publish TurnOFFStatus = Adafruit_MQTT_Publish(&mqtt, MQTT_NAME "/f/TurnOFFStatus");
 
 //-------------------MQTT connection-------
 void MQTT_connect()
@@ -119,10 +116,12 @@ void setup()
   Serial.println("OK!");
 
 //-------Subscribe to all the feeds on io.adafruit-----
-  mqtt.subscribe(&happyLight);
   mqtt.subscribe(&sadLight);
   mqtt.subscribe(&tiredLight);
   mqtt.subscribe(&stressedLight);
+  mqtt.subscribe(&headacheLight);
+  mqtt.subscribe(&worriedLight);
+  mqtt.subscribe(&boredLight);
   mqtt.subscribe(&TurnOFF);
 //-----------------------------------------------------
 
@@ -130,13 +129,9 @@ void setup()
   pinMode(G, OUTPUT);
   pinMode(B, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
-  digitalWrite(R, LOW);
-  digitalWrite(G, LOW);
-  digitalWrite(B, LOW);
-
   MQTT_connect();
+  OFF.lightItUp();
 }
-
 
 void loop()
 {
@@ -144,64 +139,53 @@ void loop()
   
   while ((subscription = mqtt.readSubscription(5000)))
   {
-    if (subscription == &happyLight)
-    {
-        Serial.print("happyLight: ");
-        Serial.println((char*) happyLight.lastread);
-        Red.lightItUp();
-        happyStatus.publish("ON");
-        sadStatus.publish("OFF");
-        tiredStatus.publish("OFF");
-        stressedStatus.publish("OFF");
-        TurnOFFStatus.publish("NOT DONE");
-    }
-    
-    else if(subscription == &sadLight)
+    if(subscription == &sadLight)
     {
       Serial.print("sadLight: ");
       Serial.println((char*) sadLight.lastread);
       Yellow.lightItUp();
-      happyStatus.publish("OFF");
-      sadStatus.publish("ON");
-      tiredStatus.publish("OFF");
-      stressedStatus.publish("OFF");
-      TurnOFFStatus.publish("NOT DONE");
     }
     
     else if (subscription == &tiredLight)
     {
       Serial.print("tiredLight: ");
       Serial.println((char*) tiredLight.lastread);
-      Blue.lightItUp();
-      happyStatus.publish("OFF");
-      sadStatus.publish("OFF");
-      tiredStatus.publish("ON");
-      stressedStatus.publish("OFF");
-      TurnOFFStatus.publish("NOT DONE");
+      LightRed.lightItUp();
     }
 
     else if (subscription == &stressedLight)
     {
       Serial.print("stressedLight: ");
       Serial.println((char*) stressedLight.lastread);
-      Green.lightItUp();
-      happyStatus.publish("OFF");
-      sadStatus.publish("OFF");
-      tiredStatus.publish("OFF");
-      stressedStatus.publish("ON");
-      TurnOFFStatus.publish("NOT DONE");
+      Lavender.lightItUp();
     }
 
+    else if(subscription == &headacheLight)
+    {
+      Serial.print("headacheLight: ");
+      Serial.println((char*) headacheLight.lastread);
+      LightGreen.lightItUp();
+    }
+
+    else if(subscription == &worriedLight)
+    {
+      Serial.print("worriedLight: ");
+      Serial.println((char*) worriedLight.lastread);
+      Turquoise.lightItUp();
+    }
+
+    else if(subscription == &boredLight)
+    {
+      Serial.print("boredLight: ");
+      Serial.println((char*) boredLight.lastread);
+      Coral.lightItUp();
+    }
+    
     else if (subscription == &TurnOFF)
     {
-        Serial.print("All Lights: ");
-        Serial.println((char*) happyLight.lastread);
+        Serial.print("Turn off Lights: ");
+        Serial.println((char*) TurnOFF.lastread);
         OFF.lightItUp();
-        happyStatus.publish("OFF");
-        sadStatus.publish("OFF");
-        tiredStatus.publish("OFF");
-        stressedStatus.publish("OFF");
-        TurnOFFStatus.publish("DONE");
     }
   }
 }
