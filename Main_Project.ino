@@ -10,7 +10,7 @@
 #define MQTT_NAME "akagarwa1"
 #define MQTT_PASS "1234eocA76KI4hHdNeE4lePDcHAw2029"    // This key is my personal key. io.adafruit does not allow the 
                                                         // key to be made public on the internet hence it is a garbage 
-                                                        // value here
+                                                        // value that is uploaded to github
 
 //------------Output Pins------------------------                                                         
 int R = D8;
