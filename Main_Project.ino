@@ -2,22 +2,23 @@
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 
-#define WIFI_SSID "Yash Moto"
-#define WIFI_PASS "onepiece2luffy"
+#define WIFI_SSID "Yash Moto"           //WiFi Name
+#define WIFI_PASS "onepiece2luffy"      //WiFi Password
 
-//#define WIFI_SSID "Akshit"
-//#define WIFI_PASS "akshit2001"
-
-#define MQTT_SERV "io.adafruit.com"
+#define MQTT_SERV "io.adafruit.com"     //MQTT server details
 #define MQTT_PORT 1883
 #define MQTT_NAME "akagarwa1"
-#define MQTT_PASS ""
+#define MQTT_PASS "aio_eocA76KI4hHdNeE4lePDcHAw209"    // This key is my personal key. io.adafruit does not allow the 
+                                                        // key to be made public on the internet hence it is a garbage 
+                                                        // value here
 
+//------------Output Pins------------------------                                                         
 int R = D8;
 int G = D7;
 int B = D6;
+/------------------------------------------------
 
-//-------------Class for defining colors --------
+//------------Class color------------------------
 struct color
 {
     int redValue;
@@ -42,16 +43,17 @@ struct color
 
 
 //----------------Define Color Profiles----------
-color Yellow(255,255,0);          
-color LightRed(255,10,10);        
-color Lavender(181,66,246);       
-color LightGreen(103,223,147);
-color Coral(249,119,72);    
-color Turquoise(72,209,204);           
+color Yellow(255,200,0);          //Sad Light
+color LightRed(255,10,10);        //Tired Light
+color Lavender(181,66,246);       //Stressed Light
+color LightGreen(103,223,100);    //Headache Light
+color Coral(255,75,100);          //Bored Light
+color Turquoise(72,209,204);      //Worried Light     
 color OFF(0,0,0);                 //Turn of the lights by changing RGB to  0 0 0
 //-----------------------------------------------
 
 
+//----Declare the feeds made on io.adafruit------
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, MQTT_SERV, MQTT_PORT, MQTT_NAME, MQTT_PASS);
 
@@ -62,8 +64,9 @@ Adafruit_MQTT_Subscribe headacheLight = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME
 Adafruit_MQTT_Subscribe worriedLight = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/worriedLight");
 Adafruit_MQTT_Subscribe boredLight = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/boredLight");
 Adafruit_MQTT_Subscribe TurnOFF = Adafruit_MQTT_Subscribe(&mqtt, MQTT_NAME "/f/TurnOFF");
+//-----------------------------------------------
 
-//-------------------MQTT connection-------
+//-------------------MQTT connection-------------
 void MQTT_connect()
 {
 
@@ -101,6 +104,7 @@ void setup()
   Serial.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
 
+
 //-------Connect to WiFi-------------------------------
   Serial.print("\n\nConnecting Wifi>");
   WiFi.begin(WIFI_SSID, WIFI_PASS);
@@ -113,7 +117,9 @@ void setup()
   }
 //-----------------------------------------------------  
 
+
   Serial.println("OK!");
+
 
 //-------Subscribe to all the feeds on io.adafruit-----
   mqtt.subscribe(&sadLight);
@@ -125,6 +131,7 @@ void setup()
   mqtt.subscribe(&TurnOFF);
 //-----------------------------------------------------
 
+//------Declare output pins,connect to io.adafruit and turn off the led-------
   pinMode(R, OUTPUT);
   pinMode(G, OUTPUT);
   pinMode(B, OUTPUT);
@@ -132,12 +139,14 @@ void setup()
   MQTT_connect();
   OFF.lightItUp();
 }
+//----------------------------------------------------------------------------
+
 
 void loop()
 {
   Adafruit_MQTT_Subscribe * subscription;
   
-  while ((subscription = mqtt.readSubscription(5000)))
+  while ((subscription = mqtt.readSubscription(5000)))    //Check change in subscriotion and then check which subscription
   {
     if(subscription == &sadLight)
     {
