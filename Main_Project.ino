@@ -8,7 +8,7 @@
 #define MQTT_SERV "io.adafruit.com"     //MQTT server details
 #define MQTT_PORT 1883
 #define MQTT_NAME "akagarwa1"
-#define MQTT_PASS "aio_eocA76KI4hHdNeE4lePDcHAw209"    // This key is my personal key. io.adafruit does not allow the 
+#define MQTT_PASS "1234eocA76KI4hHdNeE4lePDcHAw2029"    // This key is my personal key. io.adafruit does not allow the 
                                                         // key to be made public on the internet hence it is a garbage 
                                                         // value here
 
