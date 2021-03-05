@@ -2,11 +2,8 @@
 
  
 
-const char* ssid = "Yash Moto";    //  Your Wi-Fi Name
-const char* password = "onepiece2luffy";   // Wi-Fi Password
-
-//const char* ssid = "Akshit";
-//const char* password = "akshit2001";
+const char* ssid = "";    //  Your Wi-Fi Name
+const char* password = "";   // Wi-Fi Password
 
  
 
